@@ -3,14 +3,14 @@ const path = require('path');
 
 const root = path.dirname(__dirname)
 
-class Homepage {
+export class Homepage {
     homepage_path: string;
     homepage_template_path: string;
     googlemaps_key_path: string;
 
     constructor() {
         this.homepage_template_path = path.join(root, "html_templates", "index.html");
-        this.homepage_path = path.join(root,"client", "index.html");
+        this.homepage_path = path.join(root, "client", "index.html");
         this.googlemaps_key_path = path.join(root, "secrets", "GOOGLEMAPS_KEY");
     }
 
@@ -21,5 +21,3 @@ class Homepage {
         fs.writeFileSync(this.homepage_path, contents);
     }
 }
-
-module.exports = Homepage;

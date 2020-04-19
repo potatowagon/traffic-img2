@@ -9,7 +9,7 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const publicIp = require('public-ip');
 const iplocation = require('iplocation');
-const Homepage = require('./homepage')
+import { Homepage } from './homepage';
 const HOST = '0.0.0.0';
 const PORT = 3000;
 
