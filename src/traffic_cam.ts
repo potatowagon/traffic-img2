@@ -42,7 +42,7 @@ export class TrafficCam {
                 res.on('data', d => {
                     resStr += d;
                 });
-                res.on("end", function() {
+                res.on("end", function () {
                     console.log(resStr);
                     let camsRaw = JSON.parse(resStr);
                     cams = camsRaw.value;
