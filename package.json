@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/potatowagon/traffic-img",
   "dependencies": {
+    "@types/googlemaps": "^3.39.3",
+    "@types/node": "^13.13.0",
     "express": "^4.16.3",
     "http": "0.0.0",
     "iplocation": "^5.0.1",

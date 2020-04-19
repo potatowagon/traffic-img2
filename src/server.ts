@@ -1,10 +1,15 @@
+// This script exports nothing
+export {};
+
 // load modules
+const path = require('path');
 const express = require('express');
 const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const publicIp = require('public-ip');
 const iplocation = require('iplocation');
+const Homepage = require('./homepage')
 const HOST = '0.0.0.0';
 const PORT = 3000;
 
@@ -12,10 +17,13 @@ var sockets = {};
 var clients = 0;
 
 //Static Routes
-app.use(express.static(__dirname));
+const root = path.dirname(__dirname)
+app.use(express.static(root));
 
 //Main App Route, serve mainpage
-app.get('/', (req, res, next) => res.sendFile(__dirname + '/index.html'));
+var homepage = new Homepage();
+homepage.insertGoogleMapsKey();
+app.get('/', (req, res, next) => res.sendFile(homepage.homepage_path));
 
 // handle socket client connection
 io.on('connection', (socket) => {

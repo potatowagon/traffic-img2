@@ -1,5 +1,6 @@
-bcm2835-1.56/*
 log.txt
 log*.txt
 secrets/
 node_modules/
+dist/
+client/index.html
