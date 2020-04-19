@@ -23,39 +23,40 @@ export class TrafficCam {
         this._lta_datamall_key = fs.readFileSync(lta_datamall_key_path, 'utf8').trim();
     }
 
-    getAllCams(): Array<Cam> {
-        var cams = null;
-
-        let options = {
-            hostname: this.datamall_host,
-            path: this.trafficimg_path,
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'AccountKey': this._lta_datamall_key
-            }
-          };
-        console.log(options);
-        var req = http.request(options, res => {
-            console.log(`statusCode: ${res.statusCode}`);
-            res.setEncoding('utf8');
-            var resStr = "";
-            res.on('data', d => {
-                resStr += d;
+    getAllCams(): Promise<Array<Cam>> {
+        var cams = new Promise<Array<Cam>>((resolve, reject) => {
+            let options = {
+                hostname: this.datamall_host,
+                path: this.trafficimg_path,
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'AccountKey': this._lta_datamall_key
+                }
+            };
+            console.log(options);
+            var req = http.request(options, res => {
+                console.log(`statusCode: ${res.statusCode}`);
+                res.setEncoding('utf8');
+                var resStr = "";
+                res.on('data', d => {
+                    resStr += d;
+                });
+                res.on("end", function() {
+                    console.log(resStr);
+                    let camsRaw = JSON.parse(resStr);
+                    cams = camsRaw.value;
+                    resolve(cams);
+                });
             });
-            res.on("end", function() {
-                console.log(resStr);
-                let camsRaw = JSON.parse(resStr);
-                cams = camsRaw.value;
-                return cams
+
+            req.on('error', error => {
+                console.error(error);
+                reject(error);
             });
-        });
 
-        req.on('error', error => {
-            console.error(error);
+            req.end();
         });
-
-        req.end();
         return cams;
     }
 }

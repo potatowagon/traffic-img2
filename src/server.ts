@@ -10,6 +10,8 @@ const io = require('socket.io')(http);
 const publicIp = require('public-ip');
 const iplocation = require('iplocation');
 import { Homepage } from './homepage';
+import {TrafficCam} from './traffic_cam';
+
 const HOST = '0.0.0.0';
 const PORT = 3000;
 
@@ -25,6 +27,18 @@ app.use(express.static(client_root));
 var homepage = new Homepage();
 homepage.insertGoogleMapsKey();
 app.get('/', (req, res, next) => res.sendFile(homepage.homepage_path));
+
+var trafficCam = new TrafficCam()
+function refreshData(): void {
+  if (clients > 0){
+    trafficCam.getAllCams().then(cams =>{
+      io.emit('cam-data', cams);
+    });
+  }
+}
+//refresh traffic cam data every min
+const TRAFFIC_CAM_REFRESH_INTERVAL = 60000
+setInterval(refreshData, TRAFFIC_CAM_REFRESH_INTERVAL);
 
 // handle socket client connection
 io.on('connection', (socket) => {
@@ -70,12 +84,15 @@ io.on('connection', (socket) => {
   })
   .catch(err => {});
 
+  refreshData();
+
   //handle events from client user interaction
   socket.on('disconnect', () => {
     console.log('Client ' + socket.request.connection.remoteAddress + ' disconnected');
     clients --;
     console.log("clients: " + clients);
   });
+
 });
 
 // start HTTP server
