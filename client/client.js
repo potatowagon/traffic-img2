@@ -8,28 +8,28 @@ socket.on('disconnect', function () {
   console.log("Disconnect");
 });
 
-// The following example creates complex markers to indicate beaches near
-// Sydney, NSW, Australia. Note that the anchor is set to (0,32) to correspond
-// to the base of the flagpole.
+var camData = [];
+var map = null;
+
+socket.on('googlemaps-key', function(key) {
+  gmKey = key;
+});
+
+socket.on('cam-data', function (cams) {
+  camData = cams;
+  console.log(cams);
+  setMarkers(map)
+});
 
 function initMap() {
-  var map = new google.maps.Map(document.getElementById('map'), {
-    zoom: 12,
+  map = new google.maps.Map(document.getElementById('map'), {
+    zoom: 15,
     center: { lat: 1.35, lng: 103.8 }
   });
 
   setMarkers(map);
 }
 
-// Data for the markers consisting of a name, a LatLng and a zIndex for the
-// order in which these markers should display on top of each other.
-var beaches = [
-  ['1001', 1.29531332, 103.871146, 1],
-  ['Coogee Beach', -33.923036, 151.259052, 5],
-  ['Cronulla Beach', -34.028249, 151.157507, 3],
-  ['Manly Beach', -33.80010128657071, 151.28747820854187, 2],
-  ['Maroubra Beach', -33.950198, 151.259302, 1]
-];
 
 function setMarkers(map) {
   // Adds markers to the map.
@@ -39,15 +39,6 @@ function setMarkers(map) {
 
   // Origins, anchor positions and coordinates of the marker increase in the X
   // direction to the right and in the Y direction down.
-  var image = {
-    url: 'https://s3-ap-southeast-1.amazonaws.com/mtpdm/2020-04-19/15-24/1001_1513_20200419151601_2b50c5.jpg',
-    // This marker is 20 pixels wide by 32 pixels high.
-    size: new google.maps.Size(320, 240),
-    // The origin for this image is (0, 0).
-    origin: new google.maps.Point(160, 120),
-    // The anchor for this image is the base of the flagpole at (0, 32).
-    anchor: new google.maps.Point(160, 120)
-  };
 
   var flag = {
     url: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png',
@@ -58,6 +49,7 @@ function setMarkers(map) {
     // The anchor for this image is the base of the flagpole at (0, 32).
     anchor: new google.maps.Point(0, 32)
   };
+
   // Shapes define the clickable region of the icon. The type defines an HTML
   // <area> element 'poly' which traces out a polygon as a series of X,Y points.
   // The final coordinate closes the poly by connecting to the first coordinate.
@@ -65,24 +57,35 @@ function setMarkers(map) {
     coords: [1, 1, 1, 20, 18, 20, 18, 1],
     type: 'poly'
   };
-  for (var i = 0; i < beaches.length; i++) {
-    var beach = beaches[i];
+
+  for (var i = 0; i < camData.length; i++) {
+    var cam = camData[i];
+    var image = {
+      url: cam.ImageLink,
+      // This marker is 20 pixels wide by 32 pixels high.
+      size: new google.maps.Size(32, 24),
+      // The origin for this image is (0, 0).
+      origin: new google.maps.Point(0, 0),
+      // The anchor for this image is the base of the flagpole at (0, 32).
+      anchor: new google.maps.Point(0, 0)
+    };
+    zCounter = 0
     var marker = new google.maps.Marker({
-      position: { lat: beach[1], lng: beach[2] },
+      position: { lat: cam.Latitude, lng: cam.Longitude },
       map: map,
       icon: image,
       shape: shape,
-      title: beach[0],
-      zIndex: beach[3]
+      title: cam.CameraID,
+      zIndex: zCounter ++
     });
 
     var marker = new google.maps.Marker({
-      position: { lat: beach[1], lng: beach[2] },
+      position: { lat: cam.Latitude, lng: cam.Longitude },
       map: map,
       icon: flag,
       shape: shape,
-      title: beach[0],
-      zIndex: beach[3]
+      title: cam.CameraID,
+      zIndex: zCounter ++
     });
   }
 }

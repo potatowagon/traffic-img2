@@ -3,6 +3,7 @@ export {};
 
 // load modules
 const path = require('path');
+const fs = require('fs');
 const express = require('express');
 const app = express();
 const http = require('http').Server(app);
@@ -36,6 +37,7 @@ function refreshData(): void {
     });
   }
 }
+
 //refresh traffic cam data every min
 const TRAFFIC_CAM_REFRESH_INTERVAL = 60000
 setInterval(refreshData, TRAFFIC_CAM_REFRESH_INTERVAL);
