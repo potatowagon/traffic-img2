@@ -18,7 +18,8 @@ var clients = 0;
 
 //Static Routes
 const root = path.dirname(__dirname)
-app.use(express.static(root));
+const client_root = path.join(root, "client")
+app.use(express.static(client_root));
 
 //Main App Route, serve mainpage
 var homepage = new Homepage();
