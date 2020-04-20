@@ -12,6 +12,7 @@ const imgDisplay = {
   HIDE: 0,
   SHOW: 1,
   ZOOM: 2,
+  SUPERZOOM : 3
 }
 
 var camData = [];
@@ -90,7 +91,7 @@ function initMarkerData(cams, map) {
       map: null,
       icon: image,
       title: cam.CameraID,
-      zIndex: zCounter++
+      zIndex: 99
     });
     imgMarkers[cam.CameraID].status = imgDisplay.HIDE;
   });
@@ -98,7 +99,7 @@ function initMarkerData(cams, map) {
 
 function toggleImgDisplay(marker, event) {
   img = imgMarkers[marker.rb.srcElement.title];
-  img.status = (img.status + 1) % 3
+  img.status = (img.status + 1) % Object.keys(imgDisplay).length;
   updateMarkerImg();
 }
 
@@ -118,7 +119,7 @@ function showZoomedOutView() {
   });
 
   Object.values(prominentCams).forEach(function (camId) {
-    console.log(camId)
+    imgM = imgMarkers[camId];
     imgMarkers[camId].setMap(map);
   });
 }
@@ -135,7 +136,32 @@ function updateMarkerImg() {
       anchor: new google.maps.Point(160, 120)
     };
 
-    imgMarkers[cam.CameraID].setIcon(image);
+    imgM = imgMarkers[cam.CameraID]
+
+    if (imgM.status === imgDisplay.HIDE) {
+      imgM.setMap(null);
+    }
+
+    if (imgM.status === imgDisplay.SHOW) {
+      imgM.setMap(map);
+      imgM.setZIndex(100);
+    }
+
+    if (imgM.status === imgDisplay.ZOOM) {
+      image.scaledSize = new google.maps.Size(320, 240);
+      image.anchor = new google.maps.Point(320, 240);
+      imgM.setMap(map);
+      imgM.setZIndex(200);
+    }
+
+    if (imgM.status === imgDisplay.SUPERZOOM) {
+      image.scaledSize = new google.maps.Size(640, 480);
+      image.anchor = new google.maps.Point(640, 480);
+      imgM.setMap(map);
+      imgM.setZIndex(300);
+    }
+
+    imgM.setIcon(image);
   });
   console.log(map.zoom);
   console.log(event)
