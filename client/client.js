@@ -89,6 +89,9 @@ function toggleImgDisplay(marker, event) {
   console.log(marker);
   console.log(marker.rb.srcElement.title);
   var img = imgMarkers[marker.rb.srcElement.title];
+  if (typeof img === 'undefined') {
+    img = imgMarkers[marker.rb.srcElement.parentElement.title];
+  }
   img.status = (img.status + 1) % Object.keys(imgDisplay).length;
   updateMarkerImg();
 }
