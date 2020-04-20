@@ -2,5 +2,5 @@ log.txt
 log*.txt
 secrets/
 node_modules/
-dist/
+server/
 client/index.html
