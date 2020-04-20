@@ -74,20 +74,10 @@ function initMarkerData(cams, map) {
 
     google.maps.event.addListener(flagMarkers[cam.CameraID], 'click', toggleImgDisplay);
 
-    var image = {
-      url: cam.ImageLink,
-      // This marker is 20 pixels wide by 32 pixels high.
-      size: new google.maps.Size(32, 24),
-      // The origin for this image is (0, 0).
-      origin: new google.maps.Point(0, 0),
-      // The anchor for this image is the base of the flagpole at (0, 32).
-      anchor: new google.maps.Point(0, 0)
-    };
-
     imgMarkers[cam.CameraID] = new google.maps.Marker({
       position: { lat: cam.Latitude, lng: cam.Longitude },
       map: null,
-      icon: image,
+      icon: null,
       title: cam.CameraID,
       zIndex: 99
     });
@@ -166,47 +156,5 @@ function updateMarkerImg() {
 
   if (map.zoom <= 12) {
     showZoomedOutView()
-  }
-}
-
-
-function setMarkers(map) {
-  // Adds markers to the map.
-
-  // Marker sizes are expressed as a Size of X,Y where the origin of the image
-  // (0,0) is located in the top left of the image.
-
-  // Origins, anchor positions and coordinates of the marker increase in the X
-  // direction to the right and in the Y direction down.
-
-  for (var i = 0; i < camData.length; i++) {
-    var cam = camData[i];
-    var image = {
-      url: cam.ImageLink,
-      // This marker is 20 pixels wide by 32 pixels high.
-      size: new google.maps.Size(32, 24),
-      // The origin for this image is (0, 0).
-      origin: new google.maps.Point(0, 0),
-      // The anchor for this image is the base of the flagpole at (0, 32).
-      anchor: new google.maps.Point(0, 0)
-    };
-    zCounter = 0
-    var marker = new google.maps.Marker({
-      position: { lat: cam.Latitude, lng: cam.Longitude },
-      map: map,
-      icon: image,
-      shape: shape,
-      title: cam.CameraID,
-      zIndex: zCounter++
-    });
-
-    var marker = new google.maps.Marker({
-      position: { lat: cam.Latitude, lng: cam.Longitude },
-      map: map,
-      icon: flag,
-      shape: shape,
-      title: cam.CameraID,
-      zIndex: zCounter++
-    });
   }
 }
