@@ -26,9 +26,7 @@ socket.on('cam-data', function (cams) {
   if (Object.keys(flagMarkers).length === 0) {
     initMarkerData(cams, map);
   }
-  else {
-    updateMarkerImg();
-  }
+  updateMarkerImg();
 });
 
 function initMap() {
