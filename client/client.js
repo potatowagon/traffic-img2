@@ -8,6 +8,12 @@ socket.on('disconnect', function () {
   console.log("Disconnect");
 });
 
+const imgDisplay = {
+  HIDE: 0,
+  SHOW: 1,
+  ZOOM: 2,
+}
+
 var camData = [];
 var map = null;
 var flagMarkers = {};
@@ -16,11 +22,11 @@ var imgMarkers = {};
 socket.on('cam-data', function (cams) {
   camData = cams;
   console.log(cams);
-  if (Object.keys(flagMarkers).length === 0){
-    initMarkerData(cams);
+  if (Object.keys(flagMarkers).length === 0) {
+    initMarkerData(cams, map);
   }
   else {
-    updateMarkerImg(cams);
+    updateMarkerImg();
   }
 });
 
@@ -29,9 +35,13 @@ function initMap() {
     zoom: 12,
     center: { lat: 1.35, lng: 103.8 }
   });
+
+  map.addListener('center_changed', updateMarkerImg);
+
+  map.addListener('zoom_changed', updateMarkerImg);
 }
 
-function initMarkerData(cams){
+function initMarkerData(cams, map) {
   var flag = {
     url: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png',
     // This marker is 20 pixels wide by 32 pixels high.
@@ -51,15 +61,19 @@ function initMarkerData(cams){
   };
 
   zCounter = 0
-  cams.forEach(function(cam){
+  cams.forEach(function (cam) {
     flagMarkers[cam.CameraID] = new google.maps.Marker({
       position: { lat: cam.Latitude, lng: cam.Longitude },
       map: map,
       icon: flag,
       shape: shape,
       title: cam.CameraID,
-      zIndex: zCounter ++
+      zIndex: zCounter++
     });
+
+    flagMarkers[cam.CameraID].CameraID = cam.CameraID;
+
+    google.maps.event.addListener(flagMarkers[cam.CameraID], 'click', toggleImgDisplay);
 
     var image = {
       url: cam.ImageLink,
@@ -76,15 +90,59 @@ function initMarkerData(cams){
       map: null,
       icon: image,
       title: cam.CameraID,
-      zIndex: zCounter ++
+      zIndex: zCounter++
     });
+    imgMarkers[cam.CameraID].status = imgDisplay.HIDE;
   });
 }
 
-function updateMarkerImg(cams){
-  cams.forEach(function(cam){
-    imgMarkers[cam.CameraID].setIcon(cam.ImageLink);
+function toggleImgDisplay(marker, event) {
+  img = imgMarkers[marker.rb.srcElement.title];
+  img.status = (img.status + 1) % 3
+  updateMarkerImg();
+}
+
+function showZoomedOutView() {
+  var prominentCams = {
+    "north": 9703,
+    "south": 4799,
+    "east": 7791,
+    "west": 4716,
+    "central": 6705
+  }
+
+  Object.values(imgMarkers).forEach(function (img) {
+    if (img.status === imgDisplay.SHOW) {
+      img.map = null;
+    }
   });
+
+  Object.values(prominentCams).forEach(function (camId) {
+    console.log(camId)
+    imgMarkers[camId].setMap(map);
+  });
+}
+
+function updateMarkerImg() {
+  camData.forEach(function (cam) {
+    var image = {
+      url: cam.ImageLink,
+      // This marker is 20 pixels wide by 32 pixels high.
+      scaledSize: new google.maps.Size(160, 120),
+      // The origin for this image is (0, 0).
+      origin: new google.maps.Point(0, 0),
+      // The anchor for this image is the base of the flagpole at (0, 32).
+      anchor: new google.maps.Point(160, 120)
+    };
+
+    imgMarkers[cam.CameraID].setIcon(image);
+  });
+  console.log(map.zoom);
+  console.log(event)
+
+  if (map.zoom <= 12) {
+    showZoomedOutView()
+  }
 }
 
 
@@ -115,7 +173,7 @@ function setMarkers(map) {
       icon: image,
       shape: shape,
       title: cam.CameraID,
-      zIndex: zCounter ++
+      zIndex: zCounter++
     });
 
     var marker = new google.maps.Marker({
@@ -124,7 +182,7 @@ function setMarkers(map) {
       icon: flag,
       shape: shape,
       title: cam.CameraID,
-      zIndex: zCounter ++
+      zIndex: zCounter++
     });
   }
 }
