@@ -127,7 +127,7 @@ function updateMarkerImg() {
 
     imgM = imgMarkers[cam.CameraID]
 
-    if (typeof imgM.status === 'undefined') {console.log(imgM.status)}
+    if (typeof imgM.status === 'undefined') { console.log(imgM.title) }
 
     if (imgM.status === imgDisplay.HIDE) {
       imgM.setMap(null);
