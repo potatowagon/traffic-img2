@@ -12,7 +12,7 @@ const imgDisplay = {
   HIDE: 0,
   SHOW: 1,
   ZOOM: 2,
-  SUPERZOOM : 3
+  SUPERZOOM: 3
 }
 
 var camData = [];
