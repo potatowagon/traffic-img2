@@ -59,7 +59,7 @@ function initMarkerData(cams, map) {
     type: 'poly'
   };
 
-  zCounter = 0
+  var zCounter = 0
   cams.forEach(function (cam) {
     flagMarkers[cam.CameraID] = new google.maps.Marker({
       position: { lat: cam.Latitude, lng: cam.Longitude },
@@ -86,7 +86,9 @@ function initMarkerData(cams, map) {
 }
 
 function toggleImgDisplay(marker, event) {
-  img = imgMarkers[marker.rb.srcElement.title];
+  console.log(marker);
+  console.log(marker.rb.srcElement.title);
+  var img = imgMarkers[marker.rb.srcElement.title];
   img.status = (img.status + 1) % Object.keys(imgDisplay).length;
   updateMarkerImg();
 }
@@ -107,7 +109,6 @@ function showZoomedOutView() {
   });
 
   Object.values(prominentCams).forEach(function (camId) {
-    imgM = imgMarkers[camId];
     imgMarkers[camId].setMap(map);
   });
 }
@@ -125,6 +126,8 @@ function updateMarkerImg() {
     };
 
     imgM = imgMarkers[cam.CameraID]
+
+    if (typeof imgM.status === 'undefined') {console.log(imgM.status)}
 
     if (imgM.status === imgDisplay.HIDE) {
       imgM.setMap(null);
