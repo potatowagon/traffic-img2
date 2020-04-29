@@ -101,9 +101,10 @@ function toggleImgDisplay(marker, event) {
 
 function showZoomedOutView() {
   var prominentCams = {
-    "north": 9703,
+    "jb": 2701,
+    "north": 7797,
     "south": 4799,
-    "east": 7791,
+    "east": 6711,
     "west": 4716,
     "central": 6705
   }
