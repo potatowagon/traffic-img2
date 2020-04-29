@@ -90,11 +90,20 @@ function initMarkerData(cams, map) {
 
 function toggleImgDisplay(marker, event) {
   console.log(marker);
-  console.log(marker.rb.srcElement.title);
-  var img = imgMarkers[marker.rb.srcElement.title];
-  if (typeof img === 'undefined') {
-    img = imgMarkers[marker.rb.srcElement.parentElement.title];
+  possiblePaths = [
+    "rb.srcElement.title",
+    "tb.srcElement.title",
+    "rb.srcElement.parentElement.title",
+    "tb.srcElement.parentElement.title"
+  ]
+
+  for (let i = 0; i < possiblePaths.length; i++) {
+    var title = _.get(marker, possiblePaths[i], null)
+    if (title !== null) {
+      break;
+    }
   }
+  let img = imgMarkers[title];
   img.status = (img.status + 1) % Object.keys(imgDisplay).length;
   updateMarkerImg();
 }
@@ -116,7 +125,11 @@ function showZoomedOutView() {
   });
 
   Object.values(prominentCams).forEach(function (camId) {
-    imgMarkers[camId].setMap(map);
+    try {
+      imgMarkers[camId].setMap(map);
+    } catch (TypeError) {
+      console.log(camId + " not available");
+    }
   });
 }
 
