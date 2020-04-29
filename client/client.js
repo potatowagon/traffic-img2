@@ -35,6 +35,9 @@ function initMap() {
     center: { lat: 1.35, lng: 103.8 }
   });
 
+  var trafficLayer = new google.maps.TrafficLayer();
+  trafficLayer.setMap(map);
+
   map.addListener('center_changed', updateMarkerImg);
 
   map.addListener('zoom_changed', updateMarkerImg);
