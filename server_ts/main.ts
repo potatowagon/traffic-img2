@@ -13,8 +13,8 @@ const iplocation = require('iplocation');
 import { Homepage } from './homepage';
 import {TrafficCam} from './traffic_cam';
 
-const HOST = '0.0.0.0';
-const PORT = 3000;
+var HOST = '127.0.0.1';
+var PORT = process.env.PORT || 3000;
 
 var sockets = {};
 var clients = 0;
@@ -99,7 +99,7 @@ io.on('connection', (socket) => {
 
 // start HTTP server
 http.listen(PORT, HOST, () => {
-  console.log(`Server listening at http://${HOST}:${PORT}`);
+  console.log(`Server listening at http://${HOST}:${PORT}/`);
 });
 
 function secondsToHms(d) {

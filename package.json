@@ -1,11 +1,11 @@
 {
-  "name": "traffic-cam",
+  "name": "traffic-img",
   "version": "1.0.0",
   "description": "visualise traffic img",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server/main.js"
   },
   "repository": {
     "type": "git",
